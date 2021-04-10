@@ -1,0 +1,4 @@
+#install
+gdal
+pyodbc
+rasterio
