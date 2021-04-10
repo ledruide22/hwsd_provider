@@ -9,7 +9,7 @@ with open('LICENSE') as f:
     license = f.read()
 
 setup(
-    name='base_client',
+    name='hwsd_provider',
     version='0.1.0',
     description='hwsd soil data provider',
     long_description=readme,
