@@ -17,21 +17,20 @@ class SoilComposition(object):
         self.esp = esp
         self.ece = ece
 
-    def complete(self, data_tuple):
+    def complete(self, data_soil):
         """
-
+            Fill HwsdSoilDto from HWSD db data
 
         Args:
-            data_tuple:
-
-        Returns:
-
+            data_soil (tuple): containing all data obtain from HWSD ms db
         """
-        for value, atr in zip(data_tuple, self.__dir__()):
+        for value, atr in zip(data_soil, self.__dir__()):
             self.__setattr__(atr, value)
 
 
 class HwsdSoilDto(object):
+    """Objct containing all data of top and sub soil provide by HWSD db for an location """
+
     def __init__(self, top_soil=None, sub_soil=None):
         self.top_soil = top_soil
         self.sub_soil = sub_soil
