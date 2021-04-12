@@ -1,8 +1,8 @@
-TO BE complete
-========================
+HWSD_ PROVIDER
+==============
 
 1. Requirements
-================
+
 Download:
 
 - HWSD database at http://www.fao.org/fileadmin/user_upload/soils/HWSD%20Viewer/HWSD.zip
