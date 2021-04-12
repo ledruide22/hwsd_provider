@@ -7,6 +7,19 @@ from pyodbc import connect
 from src.object.hwsd_soil_dto import HwsdSoilDto
 
 
+def retrieve_soil_composition(coordinates):
+    """
+        Retrieve soil id from HWSD raster at the coordinate
+    Args:
+        coordinates (list): list of (latitude, longitude)
+
+    Returns:
+        (list): list of HwsdSoilDto, one for each coordinates
+    """
+    soil_ids = retrieve_soil_id_from_raster(coordinates)
+    return retrieve_soil_composition_from_soil_id(soil_ids)
+
+
 def retrieve_soil_id_from_raster(coordinates):
     """
         Retrieve soil id from HWSD raster at the coordinate
@@ -23,12 +36,12 @@ def retrieve_soil_id_from_raster(coordinates):
 
 def retrieve_soil_composition_from_soil_id(soil_ids):
     """
-
+        Retrieve soil composition with HWSD database for each soil_ids
     Args:
-        soil_ids (tuple):
+        soil_ids (tuple): soil id list corresponding to coordinates point (see. retrieve_soil_id_from_raster)
 
     Returns:
-
+         (list): list of HwsdSoilDto, one for each soil_ids
     """
     # set up some constants
     msdb = str(Path(environ['HWSD_DATA']) / 'HWSD' / 'HWSD.mdb')
