@@ -4,7 +4,7 @@ from pathlib import Path
 import rasterio
 from pyodbc import connect
 
-from src.hwsd_provider.object.hwsd_soil_dto import HwsdSoilDto
+from .object.hwsd_soil_dto import HwsdSoilDto
 
 
 def retrieve_soil_composition(coordinates):
