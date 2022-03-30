@@ -21,4 +21,10 @@ Download:
 Put all unzip foder in a single folder, and create a system env variable call 'HWSD_DATA' to point to this folder.
 
 
+NOTE:
+=====
+In order to obtain odbc connector for the database, please install microsoft access with the version (32/64bit) in coherence with your python version.
 
+example:
+32bit => https://www.microsoft.com/fr-fr/download/details.aspx?id=13255
+64bit => https://www.microsoft.com/fr-FR/download/details.aspx?id=54920
