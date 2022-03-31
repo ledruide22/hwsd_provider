@@ -1,6 +1,9 @@
+import os
+import platform
 from os import environ
 from pathlib import Path
 
+import jaydebeapi
 import rasterio
 from pyodbc import connect
 
@@ -34,6 +37,34 @@ def retrieve_soil_id_from_raster(coordinates):
     return tuple(x[0] for x in src.sample(coordinates))
 
 
+def __get_mbd_connection__(ms_db_pth):
+    platform_sys = platform.system()
+    if platform_sys == "Windows":
+        driver = '{Microsoft Access Driver (*.mdb, *.accdb)}'
+        # connect to db
+        con = connect('DRIVER={};DBQ={};'.format(driver, ms_db_pth))
+        cur = con.cursor()
+    elif platform_sys == "Linux":
+        ucanacess_file_path = os.environ["UCANACESS_FILE_PATH"]
+        ucanaccess_jars = [
+            f"{ucanacess_file_path}/UCanAccess-5.0.1.binlib/commons-lang3-3.8.1.jar",
+            f"{ucanacess_file_path}/UCanAccess-5.0.1.bin/lib/commons-logging-1.2.jar",
+            f"{ucanacess_file_path}/UCanAccess-5.0.1.bin/lib/hsqldb-2.5.0.jar",
+            f"{ucanacess_file_path}/UCanAccess-5.0.1.bin/lib/jackcess-3.0.1.jar",
+            f"{ucanacess_file_path}/UCanAccess-5.0.1.bin/ucanaccess-5.0.1.jar",
+        ]
+        classpath = ":".join(ucanaccess_jars)
+        cnxn = jaydebeapi.connect(
+            "net.ucanaccess.jdbc.UcanaccessDriver",
+            f"jdbc:ucanaccess://{ms_db_pth}",
+            ["", ""],
+            classpath,
+        )
+    else:
+        raise ValueError(f'{platform_sys} is not already supported')
+    return con, cur
+
+
 def retrieve_soil_composition_from_soil_id(soil_ids):
     """
         Retrieve soil composition with HWSD database for each soil_ids
@@ -44,12 +75,9 @@ def retrieve_soil_composition_from_soil_id(soil_ids):
          (list): list of HwsdSoilDto, one for each soil_ids
     """
     # set up some constants
-    msdb = str(Path(environ['HWSD_DATA']) / 'HWSD' / 'HWSD.mdb')
-    driver = '{Microsoft Access Driver (*.mdb, *.accdb)}'
+    ms_db_pth = str(Path(environ['HWSD_DATA']) / 'HWSD' / 'HWSD.mdb')
 
-    # connect to db
-    con = connect('DRIVER={};DBQ={};'.format(driver, msdb))
-    cur = con.cursor()
+    con, cur = __get_mbd_connection__(ms_db_pth)
 
     # run a query and get the results
     soil_ids_str = soil_ids.__str__()[0:-2] + ')' if len(soil_ids) == 1 else soil_ids.__str__()

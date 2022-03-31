@@ -2,3 +2,5 @@
 gdal
 pyodbc
 rasterio
+pandas
+jaydebeapi
