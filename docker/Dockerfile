@@ -14,3 +14,6 @@ ADD ./ /src/
 # Install wheel of my project into container
 RUN conda create -n myenv python=3.7
 RUN source activate myenv && cd src && conda install --file requirements.txt
+
+ENV UCANACESS_FILE_PATH /src/resources/
+ENV HWSD_DATA /src/resources/
