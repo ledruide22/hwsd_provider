@@ -21,4 +21,19 @@ Download:
 Put all unzip foder in a single folder, and create a system env variable call 'HWSD_DATA' to point to this folder.
 
 
+NOTE:
+=====
 
+WINDOWS:
+========
+In order to obtain odbc connector for the database, please install microsoft access with the version (32/64bit) in coherence with your python version.
+
+example:
+32bit => https://www.microsoft.com/fr-fr/download/details.aspx?id=13255
+64bit => https://www.microsoft.com/fr-FR/download/details.aspx?id=54920
+
+LINUX:
+======
+For linux users please download UcanAcess from http://ucanaccess.sourceforge.net/site.html
+Unzip file in a directory and create an environement variable
+UCANACESS_FILE_PATH to point to the folder UCanAccess-5.0.1.bin
