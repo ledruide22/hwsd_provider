@@ -1,5 +1,5 @@
 #install
-gdal==3.4.2
-pyodbc==4.0.32
-rasterio==1.2.10
-jaydebeapi==1.2.3
+gdal>=3.0,<3.5
+pyodbc>=4.0,<4.1
+rasterio>=1.1,<1.3
+jaydebeapi>=1.2,<1.3
