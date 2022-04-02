@@ -1,6 +1,5 @@
 #install
-gdal
-pyodbc
-rasterio
-pandas
-jaydebeapi
+gdal==3.4.2
+pyodbc==4.0.32
+rasterio==1.2.10
+jaydebeapi==1.2.3
