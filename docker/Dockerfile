@@ -38,9 +38,9 @@ RUN export HWSD_DATA
 
 # Install wheel of my project into container
 RUN conda create -n myenv python=3.7
-#RUN source activate myenv && conda install 'gdal>=3.0,<3.1' 'pyodbc>=4.0,<4.1' 'rasterio>=1.1,<1.2' 'jaydebeapi>=1.2,<1.3'
-RUN source activate myenv && conda install gdal pyodbc rasterio jaydebeapi
-RUN source activate myenv &&  pip install --no-cache-dir /opt/hwsd_provider/hwsd_provider-0.0.1-py3-none-any.whl
+#RUN source activate myenv && conda install flask 'gdal>=3.0,<3.1' 'pyodbc>=4.0,<4.1' 'rasterio>=1.1,<1.2' 'jaydebeapi>=1.2,<1.3'
+RUN source activate myenv && conda install flask gdal pyodbc rasterio jaydebeapi
+RUN source activate myenv &&  pip install --no-cache-dir /opt/hwsd_provider/hwsd_provider-0.1.0-py3-none-any.whl
 
 ## Install Java to use ms db connector
 RUN apt-get update && apt-get install -y --no-install-recommends openjdk-11-jre
@@ -48,3 +48,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends openjdk-11-jre
 ## Setup JAVA_HOME
 ENV JAVA_HOME /usr/lib/jvm/openjdk-11-jre/
 RUN export JAVA_HOME
+
+# open docker port
+EXPOSE 8180/tcp
+
+# define entry point
+COPY docker/main.py src/main.py
+ENTRYPOINT ["/opt/conda/envs/myenv/bin/python", "src/main.py"]

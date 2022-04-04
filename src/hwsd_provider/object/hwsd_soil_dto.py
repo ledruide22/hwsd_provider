@@ -29,16 +29,32 @@ class SoilComposition(object):
 
 
 class HwsdSoilDto(object):
-    """Objct containing all data of top and sub soil provide by HWSD db for an location """
+    """Object containing all data of top and sub soil provide by HWSD db for a location """
 
     def __init__(self, top_soil=None, sub_soil=None):
         self.top_soil = top_soil
         self.sub_soil = sub_soil
 
     def complete(self, top_soil_data, sub_soil_data):
+        """
+        Complete HwsdSoilDto with top_soil_data and sub_soil_data
+        Args:
+            top_soil_data (SoilComposition): contains top soil data information
+            sub_soil_data (SoilComposition): contains sub soil data information
+        """
         top_soil = SoilComposition()
         top_soil.complete(top_soil_data)
         sub_soil = SoilComposition()
         sub_soil.complete(sub_soil_data)
         self.top_soil = top_soil
         self.sub_soil = sub_soil
+
+    def to_dict(self):
+        """
+        Convert HwsdSoilDto to dict and return
+        Returns:
+            (dict): HwsdSoilDto convert to dict
+        """
+        hwsd_soil_dict = {'top_soil': self.top_soil.__dict__,
+                          'sub_soil': self.sub_soil.__dict__}
+        return hwsd_soil_dict
