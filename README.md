@@ -37,3 +37,21 @@ LINUX:
 For linux users please download UcanAcess from http://ucanaccess.sourceforge.net/site.html
 Unzip file in a directory and create an environement variable
 UCANACESS_FILE_PATH to point to the folder UCanAccess-5.0.1.bin
+
+
+DOCKER:
+=======
+
+step 1. Build docker image from dockerfile
+-------------------------------------------
+docker build . -t hwsd_linux_docker:0.0.1 -f .\docker\Dockerfile
+
+step2. Execute docker image/container
+-------------------------------------
+docker run -p 8180:8180 hwsd_linux_docker:0.0.1
+
+step3. Check if service is started
+----------------------------------
+goes at http://localhost:8180=> 'READY TO RETURN HWSD DATA' should be display
+
+send GET request by specifying the lat long wanted => http://localhost:8180//soil_data?lat=10.2878&long=20.1234
