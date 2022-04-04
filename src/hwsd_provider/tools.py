@@ -7,17 +7,18 @@ from .object.db_connection import DbConnection
 from .object.hwsd_soil_dto import HwsdSoilDto
 
 
-def retrieve_soil_composition(coordinates):
+def retrieve_soil_composition(coordinates, db_connection=None):
     """
         Retrieve soil id from HWSD raster at the coordinate
     Args:
         coordinates (list): list of (latitude, longitude)
+        db_connection (DbConnection): object containing connection to db
 
     Returns:
         (list): list of HwsdSoilDto, one for each coordinates
     """
     soil_ids = retrieve_soil_id_from_raster(coordinates)
-    return retrieve_soil_composition_from_soil_id(soil_ids)
+    return retrieve_soil_composition_from_soil_id(soil_ids, db_connection)
 
 
 def retrieve_soil_id_from_raster(coordinates):
@@ -58,12 +59,12 @@ def __execute_mbd_query(top_soil_sql_query, sub_soil_sql_query, db_connection):
     return top_soils_data, sub_soils_data
 
 
-def retrieve_soil_composition_from_soil_id(soil_ids, db_connection=None):
+def retrieve_soil_composition_from_soil_id(soil_ids, db_connection):
     """
         Retrieve soil composition with HWSD database for each soil_ids
     Args:
-        soil_ids (tuple): soil id list corresponding to coordinates point (see. retrieve_soil_id_from_raster)
-        db_connection (DbConnection):
+        soil_ids (tuple): soil id list corresponding to coordinate point (see. retrieve_soil_id_from_raster)
+        db_connection (DbConnection): object containing connection to db
     Returns:
          (list): list of HwsdSoilDto, one for each soil_ids
     """
