@@ -50,7 +50,7 @@ ENV JAVA_HOME /usr/lib/jvm/openjdk-11-jre/
 RUN export JAVA_HOME
 
 # open docker port
-EXPOSE 8180-8190/tcp
+EXPOSE 8180/tcp
 
 # define entry point
 COPY docker/main.py src/main.py
