@@ -21,6 +21,10 @@ setup(
         "rasterio>=1.1,<1.3",
         "jaydebeapi>=1.2,<1.3"
     ],
+    tests_require=[
+        "pytest",
+        "pytest-mock",
+    ],
     package_dir={'': 'src'},
     packages=find_packages('src')
 )
