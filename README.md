@@ -1,4 +1,4 @@
-HWSD_ PROVIDER
+HWSD_ PROVIDER v0.2.0
 ==============
 
 By using this code you are able to retrieve soil composition for all point over the world.
