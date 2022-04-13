@@ -17,14 +17,13 @@ def retrieve_soil_composition(coordinate, db_connection=None):
     Returns:
         (list): list of HwsdSoilDto, one for each coordinates
     """
-    soil_id = retrieve_soil_id_from_raster(coordinate)
-    # mu_global = retrieve_mu_global_from_soil_id(soil_id, db_connection)
-    return retrieve_soil_composition_from_mu_global(soil_id, db_connection)
+    mu_global = retrieve_mu_global_from_raster(coordinate)
+    return retrieve_soil_composition_from_mu_global(mu_global, db_connection)
 
 
-def retrieve_soil_id_from_raster(coordinate):
+def retrieve_mu_global_from_raster(coordinate):
     """
-        Retrieve soil id from HWSD raster at the coordinate
+        Retrieve mu_global from HWSD raster at the coordinate
     Args:
         coordinate (tuple): (longitude, latitude)
 
@@ -55,26 +54,6 @@ def __execute_mbd_query(sql_query, db_connection, force_open=False):
         db_connection.close_connection()
 
     return query_data
-
-
-def retrieve_mu_global_from_soil_id(soil_id, db_connection):
-    """
-    Retrieve mu_global (key for HWSD_DATA) from soil_id (raster ID)
-    Args:
-        soil_id (int): soil_id .see: retrieve_soil_id_from_raster
-        db_connection (DbConnection): object containing connection to db
-
-    Returns:
-        (int): mu_global associated to soil_id
-    """
-    if db_connection is None:
-        db_connection = DbConnection(is_permanent=False)
-        db_connection.open_connection()
-    mu_retrieve_sql_query = f'SELECT MU_GLOBAL FROM HWSD_SMU WHERE ID = {str(soil_id)}'
-    mu_global = __execute_mbd_query(mu_retrieve_sql_query, db_connection)
-    if len(mu_global) == 0:
-        raise ValueError('No soil data for this point')
-    return mu_global[0][0]
 
 
 def retrieve_soil_composition_from_mu_global(mu_global, db_connection):

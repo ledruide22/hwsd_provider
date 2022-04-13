@@ -1,16 +1,15 @@
 from mock.mock import MagicMock
 
 from src.hwsd_provider.object.hwsd_soil_dto import HwsdSoilDto
-from src.hwsd_provider.tools import retrieve_soil_composition, retrieve_soil_id_from_raster, \
-    retrieve_soil_composition_from_mu_global, retrieve_mu_global_from_soil_id
+from src.hwsd_provider.tools import retrieve_soil_composition, retrieve_mu_global_from_raster, \
+    retrieve_soil_composition_from_mu_global
 
 
 def test_retrieve_soil_composition(mocker):
     # Given
     coordinates = [(10.23, 12.22)]
     hwsd_soil_dto = HwsdSoilDto('top_soil', 'sub_soil')
-    mocker.patch('src.hwsd_provider.tools.retrieve_soil_id_from_raster', return_value=1234)
-    mocker.patch('src.hwsd_provider.tools.retrieve_mu_global_from_soil_id', return_value=5678)
+    mocker.patch('src.hwsd_provider.tools.retrieve_mu_global_from_raster', return_value=1234)
     mocker.patch('src.hwsd_provider.tools.retrieve_soil_composition_from_mu_global', return_value=[hwsd_soil_dto])
     # When
     response = retrieve_soil_composition(coordinates)
@@ -18,7 +17,7 @@ def test_retrieve_soil_composition(mocker):
     assert response[0] == hwsd_soil_dto
 
 
-def test_retrieve_soil_id_from_raster(mocker):
+def test_retrieve_mu_global_from_raster(mocker):
     # Given
     expected_response = [1]
     coordinates = [(10.23, 12.22)]
@@ -26,24 +25,12 @@ def test_retrieve_soil_id_from_raster(mocker):
     src.sample.return_value = [[x] for x in expected_response]
     mocker.patch('src.hwsd_provider.tools.rasterio.open', return_value=src)
     # When
-    response = retrieve_soil_id_from_raster(coordinates)
+    response = retrieve_mu_global_from_raster(coordinates)
     # Then
     assert response == expected_response[0]
 
 
-def test_retrieve_mu_global_from_soil_id(mocker):
-    # Given
-    soil_id = 1234
-    soil_connection = None
-    expected_mu_global = 5678
-    mocker.patch('src.hwsd_provider.tools.__execute_mbd_query', return_value=[(expected_mu_global,)])
-    # When
-    response = retrieve_mu_global_from_soil_id(soil_id, soil_connection)
-    # Then
-    assert response == expected_mu_global
-
-
-def test_retrieve_soil_composition_from_soil_id(mocker):
+def test_retrieve_soil_composition_from_mu_global(mocker):
     # Given
     mu_global = 1234
     soil_connection = None
