@@ -11,22 +11,22 @@ def retrieve_soil_composition(coordinate, db_connection=None):
     """
         Retrieve soil id from HWSD raster at the coordinate
     Args:
-        coordinate (list): (latitude, longitude)
+        coordinate (list): (long, lat)
         db_connection (DbConnection): object containing connection to db
 
     Returns:
         (list): list of HwsdSoilDto, one for each coordinates
     """
     soil_id = retrieve_soil_id_from_raster(coordinate)
-    mu_global = retrieve_mu_global_from_soil_id(soil_id, db_connection)
-    return retrieve_soil_composition_from_mu_global(mu_global, db_connection)
+    # mu_global = retrieve_mu_global_from_soil_id(soil_id, db_connection)
+    return retrieve_soil_composition_from_mu_global(soil_id, db_connection)
 
 
 def retrieve_soil_id_from_raster(coordinate):
     """
         Retrieve soil id from HWSD raster at the coordinate
     Args:
-        coordinate (tuple): (latitude, longitude)
+        coordinate (tuple): (longitude, latitude)
 
     Returns:
         (int): soil id  corresponding to coordinate point
