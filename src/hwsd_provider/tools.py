@@ -7,63 +7,81 @@ from .object.db_connection import DbConnection
 from .object.hwsd_soil_dto import HwsdSoilDto
 
 
-def retrieve_soil_composition(coordinates, db_connection=None):
+def retrieve_soil_composition(coordinate, db_connection=None):
     """
         Retrieve soil id from HWSD raster at the coordinate
     Args:
-        coordinates (list): list of (latitude, longitude)
+        coordinate (list): (latitude, longitude)
         db_connection (DbConnection): object containing connection to db
 
     Returns:
         (list): list of HwsdSoilDto, one for each coordinates
     """
-    soil_ids = retrieve_soil_id_from_raster(coordinates)
-    return retrieve_soil_composition_from_soil_id(soil_ids, db_connection)
+    soil_id = retrieve_soil_id_from_raster(coordinate)
+    mu_global = retrieve_mu_global_from_soil_id(soil_id, db_connection)
+    return retrieve_soil_composition_from_mu_global(mu_global, db_connection)
 
 
-def retrieve_soil_id_from_raster(coordinates):
+def retrieve_soil_id_from_raster(coordinate):
     """
         Retrieve soil id from HWSD raster at the coordinate
     Args:
-        coordinates (list): list of (latitude, longitude)
+        coordinate (tuple): (latitude, longitude)
 
     Returns:
-        (tuple): soil id list corresponding to coordinates point
+        (int): soil id  corresponding to coordinate point
     """
     raster_path = Path(environ['HWSD_DATA']) / 'HWSD_RASTER' / 'hwsd.bil'
     src = rasterio.open(str(raster_path))
-    return tuple(x[0] for x in src.sample(coordinates))
+    return int([x[0] for x in src.sample([coordinate])][0])
 
 
-def __execute_mbd_query(top_soil_sql_query, sub_soil_sql_query, db_connection):
+def __execute_mbd_query(sql_query, db_connection, force_open=False):
     """
         Function to connect to msdb for linux and windows and execute querys
     Args:
-        top_soil_sql_query (str): sql query to retrieve top soil data
-        sub_soil_sql_query (str): sql query to retrieve sub soil data
-        ms_db_pth (path): path to the ms db
+        sql_query (str): sql query to retrieve data
+        db_connection (DbConnection): object containing connection to db
 
     Returns:
-        top_soils_data, sub_soils_data (list(tuple)): the tuple contains soil values from ms db
+        query_data (list(tuple)): the tuple contains requested values from ms db
     """
 
     cur = db_connection.connexion.cursor()
-    cur.execute(top_soil_sql_query)
-    top_soils_data = cur.fetchall()
-    cur.execute(sub_soil_sql_query)
-    sub_soils_data = cur.fetchall()
+    cur.execute(sql_query)
+    query_data = cur.fetchall()
     cur.close()
-    if not db_connection.is_permanent:
+    if not db_connection.is_permanent and not force_open:
         db_connection.close_connection()
 
-    return top_soils_data, sub_soils_data
+    return query_data
 
 
-def retrieve_soil_composition_from_soil_id(soil_ids, db_connection):
+def retrieve_mu_global_from_soil_id(soil_id, db_connection):
+    """
+    Retrieve mu_global (key for HWSD_DATA) from soil_id (raster ID)
+    Args:
+        soil_id (int): soil_id .see: retrieve_soil_id_from_raster
+        db_connection (DbConnection): object containing connection to db
+
+    Returns:
+        (int): mu_global associated to soil_id
+    """
+    if db_connection is None:
+        db_connection = DbConnection(is_permanent=False)
+        db_connection.open_connection()
+    mu_retrieve_sql_query = f'SELECT MU_GLOBAL FROM HWSD_SMU WHERE ID = {str(soil_id)}'
+    mu_global = __execute_mbd_query(mu_retrieve_sql_query, db_connection)
+    if len(mu_global) == 0:
+        raise ValueError('No soil data for this point')
+    return mu_global[0][0]
+
+
+def retrieve_soil_composition_from_mu_global(mu_global, db_connection):
     """
         Retrieve soil composition with HWSD database for each soil_ids
     Args:
-        soil_ids (tuple): soil id list corresponding to coordinate point (see. retrieve_soil_id_from_raster)
+        mu_global (int): soil id list corresponding to coordinate point (see. retrieve_soil_id_from_raster)
         db_connection (DbConnection): object containing connection to db
     Returns:
          (list): list of HwsdSoilDto, one for each soil_ids
@@ -73,16 +91,15 @@ def retrieve_soil_composition_from_soil_id(soil_ids, db_connection):
         db_connection.open_connection()
 
     # define query
-    soil_ids_str = soil_ids.__str__()[0:-2] + ')' if len(soil_ids) == 1 else soil_ids.__str__()
-    top_soil_sql_query = f'SELECT T_GRAVEL, T_SAND, T_SILT , T_REF_BULK_DENSITY, T_BULK_DENSITY, T_OC, T_PH_H2O, ' \
+    top_soil_sql_query = f'SELECT SHARE, T_GRAVEL, T_SAND, T_SILT , T_REF_BULK_DENSITY, T_BULK_DENSITY, T_OC, T_PH_H2O, ' \
                          f'T_CEC_CLAY, T_CEC_SOIL, T_BS, T_TEB, T_CACO3, T_CASO4,T_ESP,T_ECE FROM HWSD_DATA' \
-                         f' WHERE ID IN {soil_ids_str}'
-    sub_soil_sql_query = f'SELECT  S_GRAVEL, S_SAND, S_SILT, S_REF_BULK_DENSITY, S_BULK_DENSITY, S_OC, S_PH_H2O, ' \
+                         f' WHERE MU_GLOBAL = {str(mu_global)}'
+    sub_soil_sql_query = f'SELECT SHARE, S_GRAVEL, S_SAND, S_SILT, S_REF_BULK_DENSITY, S_BULK_DENSITY, S_OC, S_PH_H2O, ' \
                          f'S_CEC_CLAY, S_CEC_SOIL, S_BS, S_TEB, S_CACO3, S_CASO4, S_ESP, S_ECE FROM HWSD_DATA' \
-                         f' WHERE ID IN {soil_ids_str}'
+                         f' WHERE MU_GLOBAL = {str(mu_global)}'
 
-    top_soils_data, sub_soils_data = __execute_mbd_query(top_soil_sql_query, sub_soil_sql_query, db_connection)
-
+    top_soils_data = __execute_mbd_query(top_soil_sql_query, db_connection, force_open=True)
+    sub_soils_data = __execute_mbd_query(sub_soil_sql_query, db_connection)
     soil_composition = []
     for top_soil_data, sub_soil_data in zip(top_soils_data, sub_soils_data):
         hwsd_soil_dto = HwsdSoilDto()

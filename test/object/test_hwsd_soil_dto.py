@@ -1,6 +1,7 @@
 from src.hwsd_provider.object.hwsd_soil_dto import SoilComposition, HwsdSoilDto
 
-TOP_SOIL_COMPOSITION = {'gravel': 10,
+TOP_SOIL_COMPOSITION = {'share': 100,
+                        'gravel': 10,
                         'sand': 80,
                         'silt': 10,
                         'ref_bulk_density': 1,
@@ -16,7 +17,8 @@ TOP_SOIL_COMPOSITION = {'gravel': 10,
                         'esp': 1,
                         'ece': 1}
 
-SUB_SOIL_COMPOSITION = {'gravel': 20,
+SUB_SOIL_COMPOSITION = {'share': 100,
+                        'gravel': 20,
                         'sand': 20,
                         'silt': 60,
                         'ref_bulk_density': 2,
@@ -37,7 +39,8 @@ def test_should_instantiate_soil_composition():
     # Given
     soil_composition = TOP_SOIL_COMPOSITION
     # When
-    soil_composition_obj = SoilComposition(gravel=soil_composition['gravel'], sand=soil_composition['sand'],
+    soil_composition_obj = SoilComposition(share=soil_composition['share'], gravel=soil_composition['gravel'],
+                                           sand=soil_composition['sand'],
                                            silt=soil_composition['silt'],
                                            ref_bulk_density=soil_composition['ref_bulk_density'],
                                            bulk_density=soil_composition['bulk_density'],
@@ -57,7 +60,9 @@ def test_should_instantiate_soil_dto_from_obj():
     top_soil_composition = TOP_SOIL_COMPOSITION
     sub_soil_composition = SUB_SOIL_COMPOSITION
     # When
-    top_soil_composition_obj = SoilComposition(gravel=top_soil_composition['gravel'], sand=top_soil_composition['sand'],
+    top_soil_composition_obj = SoilComposition(share=top_soil_composition['share'],
+                                               gravel=top_soil_composition['gravel'],
+                                               sand=top_soil_composition['sand'],
                                                silt=top_soil_composition['silt'],
                                                ref_bulk_density=top_soil_composition['ref_bulk_density'],
                                                bulk_density=top_soil_composition['bulk_density'],
@@ -68,7 +73,8 @@ def test_should_instantiate_soil_dto_from_obj():
                                                teb=top_soil_composition['teb'], caco3=top_soil_composition['caco3'],
                                                caso4=top_soil_composition['caso4'],
                                                esp=top_soil_composition['esp'], ece=top_soil_composition['ece'])
-    sub_soil_composition_obj = SoilComposition(gravel=sub_soil_composition['gravel'], sand=sub_soil_composition['sand'],
+    sub_soil_composition_obj = SoilComposition(share=sub_soil_composition['share'],
+                                               gravel=sub_soil_composition['gravel'], sand=sub_soil_composition['sand'],
                                                silt=sub_soil_composition['silt'],
                                                ref_bulk_density=sub_soil_composition['ref_bulk_density'],
                                                bulk_density=sub_soil_composition['bulk_density'],
