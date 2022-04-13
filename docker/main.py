@@ -1,10 +1,8 @@
 import json
 
 from flask import Flask, Response, request
-
-
-from hwsd_provider.tools import retrieve_soil_composition
 from hwsd_provider.object.db_connection import DbConnection
+from hwsd_provider.tools import retrieve_soil_composition
 
 
 def launch(port="8180", host="0.0.0.0"):
@@ -23,9 +21,9 @@ def launch(port="8180", host="0.0.0.0"):
         try:
             lat = float(arguments.get('lat'))
             long = float(arguments.get('long'))
-            soil_data_list = retrieve_soil_composition([(lat, long)], db_connection=db_connection)
-            soil_data = soil_data_list[0]
-            return Response(response=json.dumps(soil_data.to_dict(), sort_keys=True, ensure_ascii=False),
+            soil_data_list = retrieve_soil_composition((lat, long), db_connection=db_connection)
+            return Response(response=json.dumps([soil_data.to_dict() for soil_data in soil_data_list], sort_keys=True,
+                                                ensure_ascii=False),
                             mimetype='application/json')
         except Exception as err:
             return Response(

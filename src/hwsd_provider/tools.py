@@ -72,6 +72,8 @@ def retrieve_mu_global_from_soil_id(soil_id, db_connection):
         db_connection.open_connection()
     mu_retrieve_sql_query = f'SELECT MU_GLOBAL FROM HWSD_SMU WHERE ID = {str(soil_id)}'
     mu_global = __execute_mbd_query(mu_retrieve_sql_query, db_connection)
+    if len(mu_global) == 0:
+        raise ValueError('No soil data for this point')
     return mu_global[0][0]
 
 
