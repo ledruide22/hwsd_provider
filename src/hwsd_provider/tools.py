@@ -4,7 +4,7 @@ from pathlib import Path
 import rasterio
 
 from .object.db_connection import DbConnection
-from .object.hwsd_soil_dto import HwsdSoilDto
+from .object.hwsd_soil_dto import HwsdSoilDto, SoilComposition
 
 
 def aggregate_soil_data(soil_composition):
@@ -16,28 +16,37 @@ def aggregate_soil_data(soil_composition):
     Returns:
         (HwsdSoilDto): soil composition object aggregate
     """
-    hwsd_soil_dto = HwsdSoilDto()
+    hwsd_soil_dto = HwsdSoilDto(SoilComposition(), SoilComposition())
+    soil_key_list = [key for key in hwsd_soil_dto.top_soil.__dict__.keys()]
     for soil in soil_composition:
         top_soil = soil.top_soil
         sub_soil = soil.sub_soil
-        ratio_top = top_soil.share
-        ratio_sub = sub_soil.share
+        ratio_top = top_soil.share / 100.
+        ratio_sub = sub_soil.share / 100.
         if ratio_top is not None:
-            for atr in top_soil.__dir__():
-                value_top = getattr(soil, atr) * ratio_top
+            for atr in soil_key_list:
+                if atr == "share":
+                    value_top = 1.
+                else:
+                    value_top = getattr(soil.top_soil, atr)
                 if value_top is not None:
                     prev_val = getattr(hwsd_soil_dto.top_soil, atr)
                     if prev_val is None:
                         prev_val = 0
-                    hwsd_soil_dto.top_soil.__setattr__(atr, value_top + prev_val)
+                    hwsd_soil_dto.top_soil.__setattr__(atr, round(value_top * ratio_top + prev_val, 5))
         if ratio_sub is not None:
-            for atr in sub_soil.__dir__():
-                value_sub = getattr(soil, atr) * ratio_sub
+            for atr in soil_key_list:
+                if atr == "share":
+                    value_sub = 1.
+                else:
+                    value_sub = getattr(soil.sub_soil, atr)
                 if value_sub is not None:
                     prev_val = getattr(hwsd_soil_dto.sub_soil, atr)
                     if prev_val is None:
                         prev_val = 0
-                    hwsd_soil_dto.sub_soil.__setattr__(atr, value_sub + prev_val)
+                    hwsd_soil_dto.sub_soil.__setattr__(atr, round(value_sub * ratio_sub + prev_val, 5))
+    hwsd_soil_dto.sub_soil.share = hwsd_soil_dto.sub_soil.share * 100
+    hwsd_soil_dto.top_soil.share = hwsd_soil_dto.top_soil.share * 100
     return hwsd_soil_dto
 
 

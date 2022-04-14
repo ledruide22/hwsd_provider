@@ -2,7 +2,24 @@ from mock.mock import MagicMock
 
 from src.hwsd_provider.object.hwsd_soil_dto import HwsdSoilDto
 from src.hwsd_provider.tools import retrieve_soil_composition, retrieve_mu_global_from_raster, \
-    retrieve_soil_composition_from_mu_global
+    retrieve_soil_composition_from_mu_global, aggregate_soil_data
+
+
+def test_aggregate_soil_data():
+    # Given
+    top_soil_1 = (50, 37, 44, 1.41, 1.24, 2.13, 7.5, 80.0, 27.0, 100.0, 28.8, 6.0, 0.0, 2.0, 0.1)
+    top_soil_2 = (50, 37, 44, 1.41, 1.24, 2.13, 7.5, 80.0, 27.0, 100.0, 28.8, 6.0, 0.0, 2.0, 0.1)
+    hwsd_soil_dto_1 = HwsdSoilDto()
+    hwsd_soil_dto_1.complete(top_soil_1, top_soil_1)
+    hwsd_soil_dto_2 = HwsdSoilDto()
+    hwsd_soil_dto_2.complete(top_soil_2, top_soil_2)
+    # When
+    response = aggregate_soil_data([hwsd_soil_dto_1, hwsd_soil_dto_2])
+    # Then
+    hwsd_soil_dto_1.top_soil.share = 100.
+    hwsd_soil_dto_1.sub_soil.share = 100.
+    assert response.__dict__['top_soil'].__dict__ == hwsd_soil_dto_1.__dict__['top_soil'].__dict__
+    assert response.__dict__['sub_soil'].__dict__ == hwsd_soil_dto_1.__dict__['sub_soil'].__dict__
 
 
 def test_retrieve_soil_composition(mocker):
