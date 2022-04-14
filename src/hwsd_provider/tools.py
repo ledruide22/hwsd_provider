@@ -7,6 +7,40 @@ from .object.db_connection import DbConnection
 from .object.hwsd_soil_dto import HwsdSoilDto
 
 
+def aggregate_soil_data(soil_composition):
+    """
+    Aggregate list of most representative soil by weight
+    Args:
+        soil_composition (HwsdSoilDto): soil composition object
+
+    Returns:
+        (HwsdSoilDto): soil composition object aggregate
+    """
+    hwsd_soil_dto = HwsdSoilDto()
+    for soil in soil_composition:
+        top_soil = soil.top_soil
+        sub_soil = soil.sub_soil
+        ratio_top = top_soil.share
+        ratio_sub = sub_soil.share
+        if ratio_top is not None:
+            for atr in top_soil.__dir__():
+                value_top = getattr(soil, atr) * ratio_top
+                if value_top is not None:
+                    prev_val = getattr(hwsd_soil_dto.top_soil, atr)
+                    if prev_val is None:
+                        prev_val = 0
+                    hwsd_soil_dto.top_soil.__setattr__(atr, value_top + prev_val)
+        if ratio_sub is not None:
+            for atr in sub_soil.__dir__():
+                value_sub = getattr(soil, atr) * ratio_sub
+                if value_sub is not None:
+                    prev_val = getattr(hwsd_soil_dto.sub_soil, atr)
+                    if prev_val is None:
+                        prev_val = 0
+                    hwsd_soil_dto.sub_soil.__setattr__(atr, value_sub + prev_val)
+    return hwsd_soil_dto
+
+
 def retrieve_soil_composition(coordinate, db_connection=None):
     """
         Retrieve soil id from HWSD raster at the coordinate
