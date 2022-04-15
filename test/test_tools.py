@@ -1,8 +1,9 @@
+import numpy as np
 from mock.mock import MagicMock
 
 from src.hwsd_provider.object.hwsd_soil_dto import HwsdSoilDto
 from src.hwsd_provider.tools import retrieve_soil_composition, retrieve_mu_global_from_raster, \
-    retrieve_soil_composition_from_mu_global, aggregate_soil_data
+    retrieve_soil_composition_from_mu_global, aggregate_soil_data, retrieve_mu_global_from_raster_by_zone
 
 
 def test_aggregate_soil_data():
@@ -47,54 +48,54 @@ def test_retrieve_mu_global_from_raster(mocker):
     assert response == expected_response[0]
 
 
-# def test_retrieve_mu_global_from_raster_by_zone(mocker):
-#    # Given
-#    geojson = {'type': 'Polygon', 'coordinates':
-#    [[(-72.2268, 44.8530), (-72.2268, 44.9530), (-72.5268, 44.9530), (-72.5268, 44.8530), (-72.2268, 44.8530)]]}
-#   expected_mu_global_list = [{'mu_global': 1234, 'area_perc': 0.7}, {'mu_global': 5678, 'area_perc': 0.3}]
-#   with mocker.patch("src.hwsd_provider.tools.rasterio.open") as mock_file:
-#   mocker.patch("src.hwsd_provider.tools.rasterio.mask.mask",
-#            return_value=[np.array([[[0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-#                                      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-#                                      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-#                                      0, 0, 0, 0, 0, 0, 0],
-#                                     [0, 4970, 4970, 4970, 4962, 4962,
-#                                      4962, 4962, 4962, 4962,
-#                                      4962, 4962, 4962, 4962, 4962,
-#                                      4962, 4962, 4962, 4962, 4962,
-#                                      4962, 4962, 4962, 4962, 4962,
-#                                      4962, 4962, 4962, 4962, 4962,
-#                                      4962, 4962, 4962, 4962, 4962,
-#                                      4962, 4962],
-#                                     [0, 4970, 4970, 4970, 4970, 4962,
-#                                      4962, 4962, 4962, 4962,
-#                                      4962, 4962, 4962, 4962, 4962,
-#                                      4962, 4962, 4962, 4962, 4962,
-#                                      4962, 4962, 4962, 4962, 4962,
-#                                      4962, 4962, 4962, 4962, 4962,
-#                                      4962, 4962, 4962, 4962, 4962,
-#                                      4962, 4962],
-#                                     [0, 4970, 4970, 4970, 4970, 4962,
-#                                      4962, 4962, 4962, 4962,
-#                                      4962, 4962, 4962, 4962, 4962,
-#                                      4962, 4962, 4962, 4962, 4962,
-#                                      4962, 4962, 4962, 4962, 4962,
-#                                      4962, 4962, 4962, 4962, 4962,
-#                                      4962, 4962, 4962, 4962, 4962,
-#                                      4962, 4962],
-#                                     [0, 4970, 4970, 4970, 4970, 4962,
-#                                      4962, 4962, 4962, 4962,
-#                                      4962, 4962, 4962, 4962, 4962,
-#                                      4962, 4962, 4962, 4962, 4962,
-#                                      4962, 4962, 4962, 4962, 4962,
-#                                               4962, 4962, 4962, 4962, 4962,
-#                                               4962, 4962, 4962, 4962, 4962,
-#                                               4962, 4962]]]), None])
-#
-#        # When
-#        mu_global_list = retrieve_mu_global_from_raster_by_zone(geojson)
-#        # Then
-#        assert mu_global_list == expected_mu_global_list
+def test_retrieve_mu_global_from_raster_by_zone(mocker):
+    # Given
+    geojson = {'type': 'Polygon', 'coordinates':
+        [[(-72.2268, 44.8530), (-72.2268, 44.9530), (-72.5268, 44.9530), (-72.5268, 44.8530), (-72.2268, 44.8530)]]}
+    expected_mu_global_list = [{'mu_global': 4962, 'area_perc': 89.58}, {'mu_global': 4970, 'area_perc': 10.42}]
+    with mocker.patch("src.hwsd_provider.tools.rasterio.open") as mock_file:
+        mocker.patch("src.hwsd_provider.tools.rasterio.mask.mask",
+                     return_value=[np.array([[[0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                               0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                               0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                               0, 0, 0, 0, 0, 0, 0],
+                                              [0, 4970, 4970, 4970, 4962, 4962,
+                                               4962, 4962, 4962, 4962,
+                                               4962, 4962, 4962, 4962, 4962,
+                                               4962, 4962, 4962, 4962, 4962,
+                                               4962, 4962, 4962, 4962, 4962,
+                                               4962, 4962, 4962, 4962, 4962,
+                                               4962, 4962, 4962, 4962, 4962,
+                                               4962, 4962],
+                                              [0, 4970, 4970, 4970, 4970, 4962,
+                                               4962, 4962, 4962, 4962,
+                                               4962, 4962, 4962, 4962, 4962,
+                                               4962, 4962, 4962, 4962, 4962,
+                                               4962, 4962, 4962, 4962, 4962,
+                                               4962, 4962, 4962, 4962, 4962,
+                                               4962, 4962, 4962, 4962, 4962,
+                                               4962, 4962],
+                                              [0, 4970, 4970, 4970, 4970, 4962,
+                                               4962, 4962, 4962, 4962,
+                                               4962, 4962, 4962, 4962, 4962,
+                                               4962, 4962, 4962, 4962, 4962,
+                                               4962, 4962, 4962, 4962, 4962,
+                                               4962, 4962, 4962, 4962, 4962,
+                                               4962, 4962, 4962, 4962, 4962,
+                                               4962, 4962],
+                                              [0, 4970, 4970, 4970, 4970, 4962,
+                                               4962, 4962, 4962, 4962,
+                                               4962, 4962, 4962, 4962, 4962,
+                                               4962, 4962, 4962, 4962, 4962,
+                                               4962, 4962, 4962, 4962, 4962,
+                                               4962, 4962, 4962, 4962, 4962,
+                                               4962, 4962, 4962, 4962, 4962,
+                                               4962, 4962]]]), None])
+
+    # When
+    mu_global_list = retrieve_mu_global_from_raster_by_zone(geojson)
+    # Then
+    assert mu_global_list == expected_mu_global_list
 
 
 def test_retrieve_soil_composition_from_mu_global(mocker):
