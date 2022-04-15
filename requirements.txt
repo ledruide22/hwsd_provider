@@ -1,4 +1,5 @@
 #install
+numpy
 gdal>=3.0,<3.5
 pyodbc>=4.0,<4.1
 rasterio>=1.1,<1.3
