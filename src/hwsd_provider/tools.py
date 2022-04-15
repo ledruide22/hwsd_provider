@@ -91,7 +91,7 @@ def retrieve_mu_global_from_raster_by_zone(geojson):
         sum_count += count
         soil_composition_temp[str(mu_global)] = count
     for mu_global in mu_globals:
-        soil_composition_final.append({'mu_global': mu_global,
+        soil_composition_final.append({'mu_global': int(mu_global),
                                        'area_perc': round(soil_composition_temp[str(mu_global)] / sum_count * 100, 2)})
     return soil_composition_final
 
