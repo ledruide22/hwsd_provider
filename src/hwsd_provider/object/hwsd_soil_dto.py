@@ -1,10 +1,12 @@
 class SoilComposition(object):
-    def __init__(self, share=None, gravel=None, sand=None, silt=None, ref_bulk_density=None, bulk_density=None, oc=None,
-                 ph=None, cec_clay=None, cec_soil=None, bs=None, teb=None, caco3=None, caso4=None, esp=None, ece=None):
+    def __init__(self, share=None, gravel=None, sand=None, silt=None, clay=None, ref_bulk_density=None,
+                 bulk_density=None, oc=None, ph=None, cec_clay=None, cec_soil=None, bs=None, teb=None, caco3=None,
+                 caso4=None, esp=None, ece=None):
         self.share = share
         self.gravel = gravel
         self.sand = sand
         self.silt = silt
+        self.clay = clay
         self.ref_bulk_density = ref_bulk_density
         self.bulk_density = bulk_density
         self.oc = oc

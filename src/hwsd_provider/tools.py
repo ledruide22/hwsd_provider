@@ -70,12 +70,12 @@ def retrieve_soil_composition_from_mu_global(mu_global, db_connection):
         db_connection.open_connection()
 
     # define query
-    top_soil_sql_query = f'SELECT SHARE, T_GRAVEL, T_SAND, T_SILT , T_REF_BULK_DENSITY, T_BULK_DENSITY, T_OC, T_PH_H2O, ' \
-                         f'T_CEC_CLAY, T_CEC_SOIL, T_BS, T_TEB, T_CACO3, T_CASO4,T_ESP,T_ECE FROM HWSD_DATA' \
-                         f' WHERE MU_GLOBAL = {str(mu_global)}'
-    sub_soil_sql_query = f'SELECT SHARE, S_GRAVEL, S_SAND, S_SILT, S_REF_BULK_DENSITY, S_BULK_DENSITY, S_OC, S_PH_H2O, ' \
-                         f'S_CEC_CLAY, S_CEC_SOIL, S_BS, S_TEB, S_CACO3, S_CASO4, S_ESP, S_ECE FROM HWSD_DATA' \
-                         f' WHERE MU_GLOBAL = {str(mu_global)}'
+    top_soil_sql_query = f'SELECT SHARE, T_GRAVEL, T_SAND, T_SILT, T_CLAY, T_REF_BULK_DENSITY, T_BULK_DENSITY, T_OC,' \
+                         f' T_PH_H2O, T_CEC_CLAY, T_CEC_SOIL, T_BS, T_TEB, T_CACO3,T_CASO4,T_ESP,T_ECE ' \
+                         f'FROM HWSD_DATA WHERE MU_GLOBAL = {str(mu_global)}'
+    sub_soil_sql_query = f'SELECT SHARE, S_GRAVEL, S_SAND, S_SILT, S_CLAY, S_REF_BULK_DENSITY, S_BULK_DENSITY, S_OC, ' \
+                         f'S_PH_H2O, S_CEC_CLAY, S_CEC_SOIL, S_BS, S_TEB, S_CACO3, S_CASO4, S_ESP, S_ECE' \
+                         f' FROM HWSD_DATA WHERE MU_GLOBAL = {str(mu_global)}'
 
     top_soils_data = __execute_mbd_query(top_soil_sql_query, db_connection, force_open=True)
     sub_soils_data = __execute_mbd_query(sub_soil_sql_query, db_connection)
