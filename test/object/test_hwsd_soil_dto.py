@@ -110,5 +110,4 @@ def test_should_complete_soil_dto():
     for key in TOP_SOIL_COMPOSITION.keys():
         assert TOP_SOIL_COMPOSITION[key] == getattr(hwsd_dto_obj.top_soil, key)
     for key in SUB_SOIL_COMPOSITION.keys():
-        print(key)
         assert SUB_SOIL_COMPOSITION[key] == getattr(hwsd_dto_obj.sub_soil, key)
