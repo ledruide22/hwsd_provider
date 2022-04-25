@@ -57,7 +57,7 @@ def launch(port="8180", host="0.0.0.0"):
 
         try:
             geojson = arguments.get('geojson')
-            mu_globals_list = retrieve_mu_global_from_raster_by_zone(eval(geojson))
+            mu_globals_list = retrieve_mu_global_from_raster_by_zone(json.loads(geojson))
             return Response(response=json.dumps(mu_globals_list, sort_keys=True,
                                                 ensure_ascii=False),
                             mimetype='application/json')
