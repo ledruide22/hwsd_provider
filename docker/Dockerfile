@@ -40,10 +40,10 @@ RUN export HWSD_DATA
 RUN conda create -n myenv python=3.7
 #RUN source activate myenv && conda install flask 'gdal>=3.0,<3.1' 'pyodbc>=4.0,<4.1' 'rasterio>=1.1,<1.2' 'jaydebeapi>=1.2,<1.3'
 RUN source activate myenv && conda install flask gdal pyodbc rasterio jaydebeapi
-RUN source activate myenv &&  pip install --no-cache-dir /opt/hwsd_provider/hwsd_provider-0.1.0-py3-none-any.whl
+RUN source activate myenv &&  pip install --no-cache-dir /opt/hwsd_provider/hwsd_provider-0.2.0-py3-none-any.whl
 
 ## Install Java to use ms db connector
-RUN apt-get update && apt-get install -y --no-install-recommends openjdk-11-jre
+RUN apt-get update && apt-get install curl -y && curl -O https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz && tar -xzf openjdk-11.0.2_linux-x64_bin.tar.gz && mkdir /usr/lib/jvm/ && mv jdk-11.0.2/ /usr/lib/jvm/openjdk-11-jre/
 
 ## Setup JAVA_HOME
 ENV JAVA_HOME /usr/lib/jvm/openjdk-11-jre/
