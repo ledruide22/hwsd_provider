@@ -4,7 +4,7 @@ from flask import Flask, Response, request
 
 from hwsd_provider.object.db_connection import DbConnection
 from hwsd_provider.tools import retrieve_soil_composition, retrieve_mu_global_from_raster_by_zone
-from src.hwsd_provider.tools import aggregate_soil_data
+from hwsd_provider.tools import aggregate_soil_data
 
 
 def launch(port="8180", host="0.0.0.0"):
